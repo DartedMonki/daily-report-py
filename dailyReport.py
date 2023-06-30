@@ -58,10 +58,10 @@ print('Notes:')
 current_note = input()
 
 current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
-previous_workbook = {}
 
 try:
     # init previous_workbook from existing files
+    previous_workbook = {}
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     date_iterator = current_date
     while date_iterator > -1:
