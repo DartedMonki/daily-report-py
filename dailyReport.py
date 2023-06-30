@@ -58,14 +58,22 @@ print('Notes:')
 current_note = input()
 
 current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
-previous_workbook = openpyxl.load_workbook('report-daily-tanggal-{}.xlsx'.format(current_date-1))
-
-# check if data already exists. use existing data
-files = [f for f in os.listdir('.') if os.path.isfile(f)]
-if current_file_name in files:
-    previous_workbook = openpyxl.load_workbook(current_file_name)
+previous_workbook = {}
 
 try:
+    # init previous_workbook from existing files
+    files = [f for f in os.listdir('.') if os.path.isfile(f)]
+    date_iterator = current_date
+    while date_iterator > -1:
+        file_name = 'report-daily-tanggal-{}.xlsx'.format(date_iterator)
+        if file_name in files:
+            previous_workbook = openpyxl.load_workbook(file_name)
+            break
+        date_iterator -= 1
+
+    if previous_workbook == {}:
+        raise FileNotFoundError('Tidak ditemukan file sebelum tanggal {}'.format(current_date))
+        
     previous_sheet = previous_workbook[current_sheet_name]
     last_history_row = 5
     while previous_sheet.cell(row = last_history_row, column = 1).value is not None:
@@ -79,6 +87,8 @@ try:
 
     current_workbook.save(current_file_name)
     current_workbook.close
+except FileNotFoundError as e:
+    print(str(e))
 except PermissionError:
     print('Error: Harap tutup file \'{}\' terlebih dahulu'.format(current_file_name))
 except KeyError:
