@@ -38,24 +38,15 @@ def write_edited_sheet(previous_sheet_title, current_date, current_stock_input, 
     current_sheet['E{}'.format(current_row)] = current_note
 
 def write_unedited_sheet(current_workbook, previous_workbook, current_sheet_name):
-    previous_sheet_names = previous_workbook.sheetnames
-    unedited_sheet_names = filter(lambda x: x != current_sheet_name, previous_sheet_names)
+    unedited_sheet_names = [name for name in previous_workbook.sheetnames if name != current_sheet_name]
     for unedited_sheet_name in unedited_sheet_names:
         previous_unedited_sheet = previous_workbook[unedited_sheet_name]
         current_unedited_sheet = current_workbook.create_sheet(unedited_sheet_name)
         for row in previous_unedited_sheet.iter_rows(values_only=True):
             current_unedited_sheet.append(row)
 
-print('Input:')
-current_stock_input = int(input())
-print('Output:')
-current_stock_output = int(input())
 print('Tanggal:')
 current_date = int(input())
-print('Nama Sheet:')
-current_sheet_name = input()
-print('Notes:')
-current_note = input()
 
 current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
 
@@ -64,7 +55,7 @@ try:
     previous_workbook = {}
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     date_iterator = current_date
-    while date_iterator > -1:
+    while date_iterator >= 0:
         file_name = 'report-daily-tanggal-{}.xlsx'.format(date_iterator)
         if file_name in files:
             previous_workbook = openpyxl.load_workbook(file_name)
@@ -74,6 +65,9 @@ try:
     if previous_workbook == {}:
         raise FileNotFoundError('Tidak ditemukan file sebelum tanggal {}'.format(current_date))
         
+    print('Nama Sheet:')
+    current_sheet_name = input()
+
     previous_sheet = previous_workbook[current_sheet_name]
     last_history_row = 5
     while previous_sheet.cell(row = last_history_row, column = 1).value is not None:
@@ -82,11 +76,19 @@ try:
 
     current_workbook = openpyxl.Workbook()
     current_workbook.remove(current_workbook.active)
+
+    print('Input:')
+    current_stock_input = int(input())
+    print('Output:')
+    current_stock_output = int(input())
+    print('Notes:')
+    current_note = input()
+
     write_edited_sheet(previous_sheet.title, current_date, current_stock_input, current_stock_output, previous_sheet, current_note, current_starting_stock)
     write_unedited_sheet(current_workbook, previous_workbook, current_sheet_name)
 
     current_workbook.save(current_file_name)
-    current_workbook.close
+    current_workbook.close()
 except FileNotFoundError as e:
     print(str(e))
 except PermissionError:
