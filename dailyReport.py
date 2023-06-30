@@ -45,12 +45,12 @@ def write_unedited_sheet(current_workbook, previous_workbook, current_sheet_name
         for row in previous_unedited_sheet.iter_rows(values_only=True):
             current_unedited_sheet.append(row)
 
-print('Tanggal:')
-current_date = int(input())
-
-current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
-
 try:
+    print('Tanggal:')
+    current_date = int(input())
+
+    current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
+
     # init previous_workbook from existing files
     previous_workbook = {}
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
