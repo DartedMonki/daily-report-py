@@ -13,20 +13,22 @@ import os
 def main():
     def write_sheet(sheetname, date, inputStock, outputStock, yesterdayWorksheet, isWithToday):
         worksheet = workbook.add_worksheet(sheetname)
+        # top header
         worksheet.write('A1', 'Tanggal')
-        worksheet.write('A2', date)
         worksheet.write('B1', 'Input')
-        worksheet.write('B2', inputStock)
         worksheet.write('C1', 'Output')
+
+        worksheet.write('A2', date)
+        worksheet.write('B2', inputStock)
         worksheet.write('C2', outputStock)
 
-        # header
+        # bottom header
         worksheet.write('A4', 'Tanggal')
         worksheet.write('B4', 'Stock Awal')
         worksheet.write('C4', 'Stock Akhir')
 
         i = 5
-        # iterate last xlsx to populate yesterday datas
+        # iterate previous xlsx to populate yesterday datas
         while yesterdayWorksheet.cell(row = i, column = 1).value is not None:
             worksheet.write('A{}'.format(i), yesterdayWorksheet.cell(row = i, column = 1).value)
             worksheet.write('B{}'.format(i), yesterdayWorksheet.cell(row = i, column = 2).value)
@@ -52,6 +54,7 @@ def main():
     newFileName = 'report-daily-tanggal-{}.xlsx'.format(date)
     yesterdayWorkbook = openpyxl.load_workbook('report-daily-tanggal-{}.xlsx'.format(dateInt-1))
 
+    # check if data already exists. use exixting data
     files = [f for f in os.listdir('.') if os.path.isfile(f)]
     if newFileName in files:
         yesterdayWorkbook = openpyxl.load_workbook(newFileName)
