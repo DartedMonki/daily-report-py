@@ -60,7 +60,7 @@ current_note = input()
 current_file_name = 'report-daily-tanggal-{}.xlsx'.format(current_date)
 previous_workbook = openpyxl.load_workbook('report-daily-tanggal-{}.xlsx'.format(current_date-1))
 
-# check if data already exists. use exixting data
+# check if data already exists. use existing data
 files = [f for f in os.listdir('.') if os.path.isfile(f)]
 if current_file_name in files:
     previous_workbook = openpyxl.load_workbook(current_file_name)
